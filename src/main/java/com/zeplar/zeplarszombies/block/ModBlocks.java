@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -16,12 +15,8 @@ public class ModBlocks {
 
     public static final HashMap<Block,Item> blocks = new HashMap<>();
 
-    @GameRegistry.ObjectHolder("zeplarszombies:crackedcobblestone")
-    public static CrackedCobblestone crackedCobblestone;
-
     public static final void commonPreinit() {
 
-        crackedCobblestone = new CrackedCobblestone();
     }
 
     public static final Block registerBlock(Block block, String name) {

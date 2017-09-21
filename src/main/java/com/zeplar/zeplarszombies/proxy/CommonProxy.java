@@ -1,5 +1,6 @@
 package com.zeplar.zeplarszombies.proxy;
 
+import com.zeplar.zeplarszombies.block.DurabilityBlock;
 import com.zeplar.zeplarszombies.block.ModBlocks;
 import com.zeplar.zeplarszombies.block.CrackedCobblestone;
 import com.zeplar.zeplarszombies.item.ModItems;
@@ -37,13 +38,14 @@ public class CommonProxy {
     public static void registerBlocks(RegistryEvent.Register<Block> event)
     {
         event.getRegistry().register(new CrackedCobblestone());
+        event.getRegistry().register(new DurabilityBlock());
     }
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event)
     {
-        ItemBlock i = new ItemBlock(ModBlocks.crackedCobblestone);
-        event.getRegistry().register(i.setRegistryName((ModBlocks.crackedCobblestone.getRegistryName())));
+        for (Block block : ModBlocks.blocks.keySet())
+        event.getRegistry().register(new ItemBlock(block).setRegistryName((block.getRegistryName())));
 
 
         for (Item item : ModItems.items)

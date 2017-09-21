@@ -1,27 +1,27 @@
 package com.zeplar.zeplarszombies.Events;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber
 public class BreakBlockEvent {
-/*
+
     @SubscribeEvent
     public static void onBreakBlock(BlockEvent.BreakEvent e)
     {
-        if (e.getWorld().isRemote)
+       EntityPlayer player = e.getPlayer();
+       player.sendMessage(new TextComponentString("Block broken."));
+
+        TileEntity te = e.getWorld().getTileEntity(e.getPos());
+        if (te == null) player.sendMessage(new TextComponentString("Null tile."));
+        else
         {
-            BlockPos bp = e.getPos();
-            TileEntity te = e.getWorld().getTileEntity(bp);
-            EntityPlayer player = e.getPlayer();
-            if (te == null) e.getWorld().setTileEntity(bp, new DurabilityTile());
-            NBTTagCompound nbt = te.getTileData();
-            if (nbt == null) nbt = new NBTTagCompound();
-
-            if (nbt.hasKey("durability")) nbt.setInteger("durability", nbt.getInteger("durability")+1);
-            else nbt.setInteger("durability",1);
-
-            te.
+            player.sendMessage(new TextComponentString("Has durability is " +  te.getTileData().hasKey("durability")));
         }
-    }*/
+    }
 
 }

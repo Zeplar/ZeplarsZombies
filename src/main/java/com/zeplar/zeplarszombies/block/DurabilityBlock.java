@@ -16,10 +16,12 @@ import javax.annotation.Nullable;
 
 public class DurabilityBlock extends Block implements ITileEntityProvider {
 
-
+    public static DurabilityBlock durabilityBlock;
     public DurabilityBlock() {
         super(Material.ROCK);
         ModBlocks.registerBlock(this, "durabilityblock");
+        setHardness(1.0f);
+        durabilityBlock = this;
     }
 
     @SideOnly(Side.CLIENT)

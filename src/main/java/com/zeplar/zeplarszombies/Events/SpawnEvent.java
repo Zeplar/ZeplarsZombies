@@ -1,7 +1,6 @@
 package com.zeplar.zeplarszombies.Events;
 
-import com.zeplar.zeplarszombies.block.ModBlocks;
-import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -14,7 +13,7 @@ public class SpawnEvent {
     @SubscribeEvent
     public static void onSpawn(PlayerEvent.PlayerLoggedInEvent e)
     {
-        e.player.inventory.addItemStackToInventory(new ItemStack(ModBlocks.crackedCobblestone));
+        e.player.sendMessage(new TextComponentString("Hello there."));
     }
 
 }
