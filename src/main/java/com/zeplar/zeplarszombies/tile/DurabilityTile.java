@@ -1,30 +1,24 @@
-package com.zeplar.zeplarszombies;
+package com.zeplar.zeplarszombies.tile;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 public class DurabilityTile extends TileEntity {
 
-    private int durability;
+    private int durability = 0;
 
     public DurabilityTile()
     {
     }
 
 
-    public static void setDurability(World world, BlockPos blockPos)
-    {
-        TileEntity te = world.getTileEntity((blockPos));
-        if (te == null) {
-            world.setTileEntity(blockPos, new DurabilityTile());
-        }
-        DurabilityTile de = (DurabilityTile)te;
-        de.durability = 5;
-
+    public int increment() {
+        durability++;
+        markDirty();
+        return durability;
     }
 
+    @Override
     public void readFromNBT(NBTTagCompound nbt) {
         if (nbt != null && nbt.hasKey("durability"))
         {
@@ -32,6 +26,8 @@ public class DurabilityTile extends TileEntity {
             super.readFromNBT(nbt);
         }
     }
+
+    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt)
     {
         if (nbt == null) nbt = new NBTTagCompound();

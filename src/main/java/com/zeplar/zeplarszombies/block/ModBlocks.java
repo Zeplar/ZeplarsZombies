@@ -20,6 +20,7 @@ public class ModBlocks {
     public static CrackedCobblestone crackedCobblestone;
 
     public static final void commonPreinit() {
+
         crackedCobblestone = new CrackedCobblestone();
     }
 

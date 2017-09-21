@@ -1,9 +1,11 @@
 package com.zeplar.zeplarszombies.tile;
 
+import net.minecraftforge.fml.common.registry.GameRegistry;
+
 public class Tiles {
 
     public static final void commonPreinit() {
-        //GameRegistry.registerTileEntity(TileEntityTutorial.class, "tileentity_tutorial");
+        GameRegistry.registerTileEntity(DurabilityTile.class, "zeplarszombies_durabilityblock");
     }
 
 }

@@ -3,6 +3,7 @@ package com.zeplar.zeplarszombies.proxy;
 import com.zeplar.zeplarszombies.block.ModBlocks;
 import com.zeplar.zeplarszombies.block.CrackedCobblestone;
 import com.zeplar.zeplarszombies.item.ModItems;
+import com.zeplar.zeplarszombies.tile.Tiles;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -21,10 +22,10 @@ public class CommonProxy {
 
     }
 
-    public void preinit(FMLPreInitializationEvent e)
-    {
+    public void preinit(FMLPreInitializationEvent e) {
         ModBlocks.commonPreinit();
         ModItems.commonPreinit();
+        Tiles.commonPreinit();
     }
 
     public void postinit(FMLPostInitializationEvent e)
