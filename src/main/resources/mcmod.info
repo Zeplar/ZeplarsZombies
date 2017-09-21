@@ -1,0 +1,16 @@
+[
+{
+  "modid": "zeplarszombies",
+  "name": "Zeplar's Zombies",
+  "description": "Survival",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Josh Hepworth"],
+  "credits": "Josh Hepworth",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
