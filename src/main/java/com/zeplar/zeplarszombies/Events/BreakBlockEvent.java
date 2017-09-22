@@ -1,5 +1,6 @@
 package com.zeplar.zeplarszombies.Events;
 
+import com.zeplar.zeplarszombies.tile.DurabilityTile;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextComponentString;
@@ -17,10 +18,11 @@ public class BreakBlockEvent {
        player.sendMessage(new TextComponentString("Block broken."));
 
         TileEntity te = e.getWorld().getTileEntity(e.getPos());
-        if (te == null) player.sendMessage(new TextComponentString("Null tile."));
-        else
+        if ((te != null) && (te instanceof DurabilityTile))
         {
-            player.sendMessage(new TextComponentString("Has durability is " +  te.getTileData().hasKey("durability")));
+            DurabilityTile dt = (DurabilityTile)te;
+            player.sendMessage(new TextComponentString("Ddurability is " + (dt).decrement()));
+            e.setCanceled(dt.getDurability() > 0);
         }
     }
 

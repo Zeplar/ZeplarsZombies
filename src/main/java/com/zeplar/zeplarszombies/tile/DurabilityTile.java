@@ -12,9 +12,13 @@ public class DurabilityTile extends TileEntity {
     }
 
 
-    public int increment() {
-        durability++;
+    public int decrement() {
+        durability--;
         markDirty();
+        return durability;
+    }
+
+    public int getDurability() {
         return durability;
     }
 
