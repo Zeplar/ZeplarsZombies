@@ -1,11 +1,11 @@
 package com.zeplar.zeplarszombies.Events;
 
 import com.zeplar.zeplarszombies.Monsters.EntityAIBreakBlock;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
 @Mod.EventBusSubscriber
 public class SpawnEvent {
@@ -13,20 +13,13 @@ public class SpawnEvent {
     private static final String LOGIN_KEY = "zeplar.firstjoin";
 
     @SubscribeEvent
-    public static void onSpawn(PlayerEvent.PlayerLoggedInEvent e)
+    public static void onSpawn(EntityJoinWorldEvent e)
     {
-        if (!e.player.world.isRemote) {
-            e.player.sendMessage(new TextComponentString("Hello there."));
+        if (e.getEntity() instanceof EntityZombie) {
+           EntityMob entity = (EntityMob)e.getEntity();
+           entity.tasks.addTask(1, new EntityAIBreakBlock(entity));
+           System.out.println("Added AI");
 
-            EntityZombie zombie = new EntityZombie(e.player.world);
-            zombie.setPosition(
-                    e.player.getPosition().getX(),
-                    e.player.getPosition().getY(),
-                    e.player.getPosition().getZ() + 2
-            );
-            zombie.tasks.addTask(0, new EntityAIBreakBlock(zombie));
-
-            e.player.world.spawnEntity(zombie);
         }
     }
 

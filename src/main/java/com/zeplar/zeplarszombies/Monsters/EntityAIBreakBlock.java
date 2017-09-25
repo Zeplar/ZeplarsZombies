@@ -1,14 +1,22 @@
 package com.zeplar.zeplarszombies.Monsters;
 
+import com.zeplar.zeplarszombies.BlockHelper;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
+
+import javax.annotation.Nullable;
 
 public class EntityAIBreakBlock extends EntityAIBase
 {
-    private EntityLiving entity;
-    private BlockPos blockPosTop = null;
-    private BlockPos blockPosBot = null;
+    protected EntityLiving entity;
+    protected BlockPos blockPos = null;
+    protected double playerRange = 10; //How close entity must be to its target to start tunneling
+    protected int breakTime = 20; //How many ticks on average to break a block
+
+    protected BlockPos targetPosition = null;
+    private BlockPos target;
 
     public EntityAIBreakBlock(EntityLiving entityIn)
     {
@@ -18,34 +26,50 @@ public class EntityAIBreakBlock extends EntityAIBase
     /**
      * Returns whether the EntityAIBase should begin execution.
      */
-    public boolean shouldExecute()
+
+    @Nullable
+    protected BlockPos tryBlocksAround(BlockPos center, BlockPos target)
     {
-        {
-           blockPosBot = new BlockPos(
-                   entity.posX + entity.getLookVec().x,
-                   entity.posY,
-                   entity.posZ + entity.getLookVec().z
-           );
-           blockPosTop = new BlockPos(
-                   entity.posX + entity.getLookVec().x,
-                   entity.posY + 1,
-                   entity.posZ + entity.getLookVec().z
-           );
+        double d0 = center.distanceSq(target);
+        double dCandidate;
+        BlockPos bestCandidate = center;
+        if (d0 > 100) return null;
 
-           if (blockExists(blockPosTop) || blockExists(blockPosBot))
-           {
-               return true;
-           }
-           return false;
-
+        for (BlockPos candidate : BlockHelper.getAround(center)) {
+            dCandidate = candidate.distanceSq(target);
+            if (dCandidate <= d0) {
+                d0 = dCandidate;
+                bestCandidate = candidate;
+            }
         }
+        if (!blockExists(bestCandidate)) return bestCandidate.up();
+        return bestCandidate;
+    }
+
+
+    public boolean shouldExecute() {
+
+        if (targetPosition == null)
+        {
+            EntityPlayer player = entity.world.getClosestPlayerToEntity(entity,playerRange);
+            if (player == null) return false;
+            else target = player.getPosition();
+        }
+        else target = targetPosition;
+        if (target == null) return false;
+
+        BlockPos candidate = tryBlocksAround(entity.getPosition(), target);
+        if (candidate == null) return false;
+        target = candidate;
+        return true;
     }
 
     private boolean blockExists(BlockPos pos)
     {
         if (pos == null) return false;
-        if (entity.world.isAirBlock(pos)) return false;
-        else return entity.world.getBlockState(pos).getBlock() != null;
+        if (!entity.world.getBlockState(pos).getMaterial().blocksMovement()) return false;
+
+        return true;
     }
 
     /**
@@ -53,20 +77,34 @@ public class EntityAIBreakBlock extends EntityAIBase
      */
     public void startExecuting()
     {
+
         super.startExecuting();
+
+        entity.getNavigator().tryMoveToXYZ(target.getX(),target.getY(),target.getZ(), 1.0);
+
+        if (blockExists(target))
+        {
+            blockPos = target;
+        }
+        else if (blockExists(target.up()))
+        {
+            blockPos = target.up();
+        }
+        else if (blockExists(target.down()))
+        {
+            blockPos = target.down();
+        }
+
     }
 
     /**
      * Returns whether an in-progress EntityAIBase should continue executing
      */
     public boolean shouldContinueExecuting() {
-        boolean topFlag = blockExists(blockPosTop);
-        boolean botFlag = blockExists(blockPosBot);
-        if (blockPosBot == null) return false;
-        double d0 = entity.getPosition().distanceSq(blockPosBot.getX(), blockPosBot.getY(), blockPosBot.getZ());
+        if (!blockExists(blockPos)) return false;
+        double d0 = entity.getPosition().distanceSq(blockPos.getX(), blockPos.getY(), blockPos.getZ());
 
-        return (topFlag || botFlag) && (d0 < 4.0);
-
+        return d0 < 4.0;
     }
 
     /**
@@ -74,9 +112,10 @@ public class EntityAIBreakBlock extends EntityAIBase
      */
     public void resetTask()
     {
-        blockPosTop = null;
-        blockPosBot = null;
+
         super.resetTask();
+        blockPos = null;
+        entity.getNavigator().clearPathEntity();
     }
 
     /**
@@ -85,18 +124,13 @@ public class EntityAIBreakBlock extends EntityAIBase
     public void updateTask()
     {
         super.updateTask();
-        entity.getLookHelper().setLookPosition(blockPosTop.getX(), blockPosTop.getY(), blockPosTop.getZ(), entity.getHorizontalFaceSpeed(), entity.getVerticalFaceSpeed());
-        if (this.entity.getRNG().nextInt(20) == 0)
+        if (this.entity.getRNG().nextInt(breakTime) == 0)
         {
-            this.entity.world.playEvent(1021, this.blockPosTop, 0);
-            if (blockExists(blockPosTop))
+            if (blockExists(blockPos))
             {
-                this.entity.world.setBlockToAir(blockPosTop);
-                blockPosTop = null;
-            }
-            if (blockExists(blockPosBot)) {
-                this.entity.world.setBlockToAir(blockPosBot);
-                blockPosBot = null;
+                this.entity.world.playEvent(1021, blockPos, 0);
+                this.entity.world.destroyBlock(blockPos, true);
+                blockPos = null;
             }
         }
     }
