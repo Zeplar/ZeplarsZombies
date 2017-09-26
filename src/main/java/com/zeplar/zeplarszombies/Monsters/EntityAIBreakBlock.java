@@ -15,12 +15,15 @@ public class EntityAIBreakBlock extends EntityAIBase
     protected double playerRange = 10; //How close entity must be to its target to start tunneling
     protected int breakTime = 20; //How many ticks on average to break a block
 
-    protected BlockPos targetPosition = null;
+    protected BlockPos targetPosition = null;   //AI will target this instead of a player
     private BlockPos target;
 
-    public EntityAIBreakBlock(EntityLiving entityIn)
+    public EntityAIBreakBlock(EntityLiving entityIn, int breakTimeIn, double playerRangeIn)
     {
         entity = entityIn;
+        setMutexBits(8);
+        this.breakTime = Math.max(1,breakTimeIn);
+        this.playerRange = playerRangeIn;
     }
 
     /**
@@ -80,8 +83,6 @@ public class EntityAIBreakBlock extends EntityAIBase
 
         super.startExecuting();
 
-        entity.getNavigator().tryMoveToXYZ(target.getX(),target.getY(),target.getZ(), 1.0);
-
         if (blockExists(target))
         {
             blockPos = target;
@@ -94,6 +95,9 @@ public class EntityAIBreakBlock extends EntityAIBase
         {
             blockPos = target.down();
         }
+
+    //    entity.getNavigator().tryMoveToXYZ(target.getX(),target.getY(),target.getZ(), 1.0);
+
 
     }
 
@@ -115,7 +119,7 @@ public class EntityAIBreakBlock extends EntityAIBase
 
         super.resetTask();
         blockPos = null;
-        entity.getNavigator().clearPathEntity();
+      //  entity.getNavigator().clearPathEntity();
     }
 
     /**

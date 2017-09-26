@@ -1,6 +1,8 @@
 package com.zeplar.zeplarszombies.Events;
 
-import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -14,38 +16,55 @@ public class ChatEvent {
     @SubscribeEvent
     public static void onMessage(ServerChatEvent event)
     {
-        if (event.getMessage().equals("makeHouse"))
+        if (event.getMessage().contains("makeHouse"))
         {
-            BlockPos pos = event.getPlayer().getPosition();
-            for (int y=pos.getY(); y < pos.getY()+3; y++)
+            if (event.getMessage().equals("makeHouse"))
+                makeHouseAround(event.getPlayer(), 2);
+            else
             {
-                makeHouseAround(event.getPlayer(), pos.getX(), y, pos.getZ());
+                String num = event.getMessage().substring("makeHouse ".length(), event.getMessage().length());
+                System.out.println("Parsing: " + num + ".");
+                int i = Integer.parseInt(num);
+                makeHouseAround(event.getPlayer(), i);
+            }
+        }
+        else if (event.getMessage().equals("kill all"))
+        {
+            for (Entity entity : event.getPlayer().world.getLoadedEntityList())
+            {
+                if (entity instanceof EntityLiving && !(entity instanceof EntityPlayer) ) entity.setDead();
             }
         }
 
         else if (event.getMessage().equals("makeCharger"))
         {
-            EntityZombie zombie = new EntityZombie(event.getPlayer().world);
-            //zombie.tasks.addTask(0, new EntityAITunnelToPlayer(zombie));
+            EntityCreeper creeper = new EntityCreeper(event.getPlayer().world);
             BlockPos position = event.getPlayer().getPosition().north(20);
-            zombie.setPosition(position.getX(),position.getY(),position.getZ());
-            event.getPlayer().world.spawnEntity(zombie);
-
+            creeper.setPosition(position.getX(),position.getY(),position.getZ());
+            event.getPlayer().world.spawnEntity(creeper);
         }
     }
 
-    private static void makeHouseAround(EntityPlayer player, int x, int y, int z)
+    private static void makeHouseAround(EntityPlayer player, int radius)
     {
-        for (int i=-2; i <= 2; i++)
+        int x = player.getPosition().getX();
+        int y = player.getPosition().getY();
+        int z = player.getPosition().getZ();
+        for (int dy = 0; dy <= 3; dy++)
+        for (int dx=-radius; dx <= radius; dx ++)
         {
-            for (int j = -2; j <= 2; j++)
+            for (int dz = -radius; dz <= radius; dz ++)
             {
-                if (i == 0 && j == 0) continue;
+                BlockPos nextBlock = new BlockPos(x+dx,y+dy,z+dz);
+                if (nextBlock.distanceSq(player.getPosition()) < 3) continue;
                 else
                 {
-                    player.world.setBlockState(new BlockPos(x+i,y,z+j), Blocks.STONE.getDefaultState());
+                    player.world.setBlockState(nextBlock, Blocks.GLASS.getDefaultState());
                 }
             }
         }
+        for (int dx=-radius; dx <=radius; dx++)
+            for (int dz=-radius; dz<=radius; dz++)
+                player.world.setBlockState(new BlockPos(x+dx,y+4,z+dz),Blocks.GLASS.getDefaultState());
     }
 }
