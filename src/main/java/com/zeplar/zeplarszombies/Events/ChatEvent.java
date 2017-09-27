@@ -1,5 +1,7 @@
 package com.zeplar.zeplarszombies.Events;
 
+import com.zeplar.zeplarszombies.Monsters.EntityAIBreakBlock;
+import com.zeplar.zeplarszombies.Monsters.MoveStraightToPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityCreeper;
@@ -41,6 +43,9 @@ public class ChatEvent {
             EntityCreeper creeper = new EntityCreeper(event.getPlayer().world);
             BlockPos position = event.getPlayer().getPosition().north(20);
             creeper.setPosition(position.getX(),position.getY(),position.getZ());
+            creeper.setGlowing(true);
+            creeper.tasks.addTask(1, new MoveStraightToPlayer(creeper, 2.0, 200));
+            creeper.tasks.addTask(1, new EntityAIBreakBlock(creeper, 1, 100));
             event.getPlayer().world.spawnEntity(creeper);
         }
     }

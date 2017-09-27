@@ -1,6 +1,8 @@
 package com.zeplar.zeplarszombies.Monsters;
 
 import com.zeplar.zeplarszombies.BlockHelper;
+import com.zeplar.zeplarszombies.block.IZeplarModBlock;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -70,8 +72,9 @@ public class EntityAIBreakBlock extends EntityAIBase
     private boolean blockExists(BlockPos pos)
     {
         if (pos == null) return false;
-        if (!entity.world.getBlockState(pos).getMaterial().blocksMovement()) return false;
-
+        IBlockState state = entity.world.getBlockState(pos);
+        if (!state.getMaterial().blocksMovement()) return false;
+        if ((state.getBlock() instanceof IZeplarModBlock) && !((IZeplarModBlock) state.getBlock()).canBeBrokenByMonsters()) return false;
         return true;
     }
 

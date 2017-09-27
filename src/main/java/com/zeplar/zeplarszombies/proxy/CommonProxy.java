@@ -1,8 +1,9 @@
 package com.zeplar.zeplarszombies.proxy;
 
+import com.zeplar.zeplarszombies.block.CrackedCobblestone;
 import com.zeplar.zeplarszombies.block.DurabilityBlock;
 import com.zeplar.zeplarszombies.block.ModBlocks;
-import com.zeplar.zeplarszombies.block.CrackedCobblestone;
+import com.zeplar.zeplarszombies.block.PortalGenerator;
 import com.zeplar.zeplarszombies.item.ModItems;
 import com.zeplar.zeplarszombies.tile.Tiles;
 import net.minecraft.block.Block;
@@ -39,6 +40,7 @@ public class CommonProxy {
     {
         event.getRegistry().register(new CrackedCobblestone());
         event.getRegistry().register(new DurabilityBlock());
+        event.getRegistry().register(new PortalGenerator());
     }
 
     @SubscribeEvent
