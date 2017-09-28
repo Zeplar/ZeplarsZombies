@@ -1,7 +1,7 @@
 package com.zeplar.zeplarszombies.Monsters;
 
+import com.zeplar.zeplarszombies.Events.PlayerScentMap;
 import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.init.SoundEvents;
@@ -35,13 +35,12 @@ public class MoveStraightToPlayer extends EntityAIBase
     public boolean shouldExecute()
     {
         if (targetPosition == null) {
-            EntityLivingBase targetEntity = creature.world.getNearestPlayerNotCreative(creature, maxTargetDistance);
-            if (targetEntity == null) {
-                return false;
-            }
-            creature.setAttackTarget(targetEntity);
-            this.targetPosition = targetEntity.getPosition();
+            targetPosition = PlayerScentMap.getNearestScent(creature.world, creature.getPosition());
+
         }
+    //        creature.setAttackTarget(targetEntity);
+    //        this.targetPosition = targetEntity.getPosition();
+
 
         if (this.creature.getDistanceSq(this.targetPosition) > (double)(this.maxTargetDistance * this.maxTargetDistance))
         {

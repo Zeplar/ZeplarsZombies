@@ -1,11 +1,11 @@
 package com.zeplar.zeplarszombies.Monsters;
 
 import com.zeplar.zeplarszombies.BlockHelper;
+import com.zeplar.zeplarszombies.Events.PlayerScentMap;
 import com.zeplar.zeplarszombies.block.IZeplarModBlock;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
@@ -56,9 +56,11 @@ public class EntityAIBreakBlock extends EntityAIBase
 
         if (targetPosition == null)
         {
-            EntityPlayer player = entity.world.getClosestPlayerToEntity(entity,playerRange);
+            /*EntityPlayer player = entity.world.getClosestPlayerToEntity(entity,playerRange);
             if (player == null) return false;
             else target = player.getPosition();
+            */
+            target = PlayerScentMap.getNearestScent(entity.world, entity.getPosition());
         }
         else target = targetPosition;
         if (target == null) return false;
