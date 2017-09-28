@@ -1,5 +1,6 @@
 package com.zeplar.zeplarszombies.proxy;
 
+import com.zeplar.zeplarszombies.Monsters.ModEntities;
 import com.zeplar.zeplarszombies.block.ModBlocks;
 import com.zeplar.zeplarszombies.item.ModItems;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -33,6 +34,8 @@ public class ClientProxy extends CommonProxy {
     {
         ModBlocks.initModels();
         ModItems.initModels();
+        ModEntities.initModels();
+
     }
 
 }

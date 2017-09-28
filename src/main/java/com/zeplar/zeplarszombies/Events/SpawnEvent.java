@@ -8,7 +8,6 @@ import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber
 public class SpawnEvent {
@@ -17,7 +16,7 @@ public class SpawnEvent {
     private static final float chargerChance = 0.1f;
     private static int maxMobsPerPlayer = 10;
 
-    @SubscribeEvent
+    //@SubscribeEvent
     public static void onSpawn(EntityJoinWorldEvent e)
     {
         if (e.getWorld().getLoadedEntityList().size() > e.getWorld().playerEntities.size() * maxMobsPerPlayer) e.setCanceled(true);

@@ -1,5 +1,6 @@
 package com.zeplar.zeplarszombies.proxy;
 
+import com.zeplar.zeplarszombies.Monsters.ModEntities;
 import com.zeplar.zeplarszombies.block.CrackedCobblestone;
 import com.zeplar.zeplarszombies.block.DurabilityBlock;
 import com.zeplar.zeplarszombies.block.ModBlocks;
@@ -9,6 +10,7 @@ import com.zeplar.zeplarszombies.tile.Tiles;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -19,6 +21,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Mod.EventBusSubscriber
 public class CommonProxy {
 
+    // Config instance
+    public static Configuration config;
+
     public void init(FMLInitializationEvent event)
     {
 
@@ -28,6 +33,8 @@ public class CommonProxy {
         ModBlocks.commonPreinit();
         ModItems.commonPreinit();
         Tiles.commonPreinit();
+        ModEntities.init();
+
     }
 
     public void postinit(FMLPostInitializationEvent e)

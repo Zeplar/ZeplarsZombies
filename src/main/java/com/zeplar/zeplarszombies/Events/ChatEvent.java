@@ -1,6 +1,7 @@
 package com.zeplar.zeplarszombies.Events;
 
 import com.zeplar.zeplarszombies.Monsters.EntityAIBreakBlock;
+import com.zeplar.zeplarszombies.Monsters.EntityInfestedVillager;
 import com.zeplar.zeplarszombies.Monsters.MoveStraightToPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -30,6 +31,15 @@ public class ChatEvent {
                 makeHouseAround(event.getPlayer(), i);
             }
         }
+        else if (event.getMessage().equals("makeInfested"))
+        {
+            EntityInfestedVillager villager = new EntityInfestedVillager(event.getPlayer().world);
+            BlockPos position = event.getPlayer().getPosition().north(2);
+            villager.setPosition(position.getX(),position.getY(),position.getZ());
+            event.getPlayer().world.spawnEntity(villager);
+            System.out.println("villager");
+        }
+
         else if (event.getMessage().equals("kill all"))
         {
             for (Entity entity : event.getPlayer().world.getLoadedEntityList())
