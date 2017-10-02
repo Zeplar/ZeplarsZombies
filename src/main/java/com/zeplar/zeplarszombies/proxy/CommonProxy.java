@@ -34,7 +34,6 @@ public class CommonProxy {
         ModItems.commonPreinit();
         Tiles.commonPreinit();
         ModEntities.init();
-
     }
 
     public void postinit(FMLPostInitializationEvent e)

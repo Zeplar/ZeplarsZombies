@@ -1,12 +1,15 @@
 package com.zeplar.zeplarszombies.Monsters;
 
+import com.zeplar.zeplarszombies.Fortress;
 import com.zeplar.zeplarszombies.ModInfo;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.*;
-import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.monster.EntitySpider;
+import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
@@ -14,13 +17,16 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.VillagerRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.registries.GameData;
 
 import javax.annotation.Nullable;
 
-public class EntityInfestedVillager extends EntityMob {
+public class EntityInfestedVillager extends EntityVillager implements IMob {
 
     private static final DataParameter<Integer> STATE = EntityDataManager.<Integer>createKey(EntityInfestedVillager.class, DataSerializers.VARINT);
     private static final DataParameter<Boolean> IGNITED = EntityDataManager.<Boolean>createKey(EntityInfestedVillager.class, DataSerializers.BOOLEAN);
@@ -35,42 +41,64 @@ public class EntityInfestedVillager extends EntityMob {
 
     public static final ResourceLocation LOOT = new ResourceLocation(ModInfo.MODID, "entities/infested_villager");
 
+
     public EntityInfestedVillager(World worldIn)
     {
         super(worldIn);
+        //super(worldIn, 6);
         setSize(0.6F, 1.95F);
     }
 
+
+    public static void init() {
+        RegistryNamespaced<ResourceLocation, VillagerRegistry.VillagerProfession> REGISTRY = GameData.getWrapper(VillagerRegistry.VillagerProfession.class);
+
+        VillagerRegistry.VillagerProfession prof = new VillagerRegistry.VillagerProfession("zeplarszombies:infested",
+                "minecraft:textures/entity/villager/villager.png",
+                "minecraft:textures/entity/zombie_villager/zombie_villager.png");
+        {
+            REGISTRY.register(6, new ResourceLocation("zeplarszombies:infested"), prof);
+
+
+            ITradeList tradeList = new EmeraldForItems(Items.STRING, new PriceInfo(4,8));
+
+            new VillagerRegistry.VillagerCareer(prof,"zeplarszombies:infested").addTrade(0, tradeList);
+        }
+    }
+
     @Override
-    protected void applyEntityAttributes()
+    public boolean getCanSpawnHere()
     {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(35.0D);
-        this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.13D);
-        this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(3.0D);
-        this.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue(2.0D);
+        if (super.getCanSpawnHere())
+        {
+            return Fortress.isInFortress(this.getPosition());
+        }
+        return false;
+    }
+
+    public void replaceWithVillager()
+    {
+        EntityVillager villager = new EntityVillager(world);
+        villager.setPosition(this.posX,this.posY,this.posZ);
+        world.spawnEntity(villager);
     }
 
     @Override
     protected void initEntityAI() {
-        this.tasks.addTask(0, new EntityAISwimming(this));
+        super.initEntityAI();
         this.tasks.addTask(2, new EntityAIInfestedVillagerSwell(this));
-        this.tasks.addTask(4, new EntityAIAttackMelee(this, 1.0D, false));
-        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
-        this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
-        this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-        this.tasks.addTask(8, new EntityAILookIdle(this));
-        this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
+        this.tasks.addTask(6, new EntityAIWander(this, 0.7));
         this.targetTasks.addTask(1, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
-        this.targetTasks.addTask(2, new EntityAIHurtByTarget(this, false, new Class[0]));
     }
+
+
 
     @Override
     protected void entityInit()
     {
         super.entityInit();
-        this.dataManager.register(STATE, Integer.valueOf(-1));
-        this.dataManager.register(IGNITED, Boolean.valueOf(false));
+        this.dataManager.register(STATE, -1);
+        this.dataManager.register(IGNITED, false);
     }
 
     public void writeEntityToNBT(NBTTagCompound compound)
@@ -110,7 +138,7 @@ public class EntityInfestedVillager extends EntityMob {
      */
     public int getInfestedVillagerState()
     {
-        return ((Integer)this.dataManager.get(STATE)).intValue();
+        return (this.dataManager.get(STATE));
     }
 
     /**
@@ -118,7 +146,13 @@ public class EntityInfestedVillager extends EntityMob {
      */
     public void setInfestedVillagerState(int state)
     {
-        this.dataManager.set(STATE, Integer.valueOf(state));
+        this.dataManager.set(STATE, state);
+    }
+
+
+    public boolean isPreventingPlayerRest(EntityPlayer p_191990_1_)
+    {
+        return false;
     }
 
     /**
@@ -149,12 +183,12 @@ public class EntityInfestedVillager extends EntityMob {
 
     public boolean hasIgnited()
     {
-        return ((Boolean)this.dataManager.get(IGNITED)).booleanValue();
+        return (this.dataManager.get(IGNITED));
     }
 
     public void ignite()
     {
-        this.dataManager.set(IGNITED, Boolean.valueOf(true));
+        this.dataManager.set(IGNITED, true);
     }
 
     @Override
@@ -168,10 +202,6 @@ public class EntityInfestedVillager extends EntityMob {
         return LOOT;
     }
 
-    @Override
-    protected boolean isValidLightLevel() {
-        return true;
-    }
 
     @Override
     public void onUpdate()

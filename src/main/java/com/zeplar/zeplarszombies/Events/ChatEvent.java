@@ -1,11 +1,7 @@
 package com.zeplar.zeplarszombies.Events;
 
-import com.zeplar.zeplarszombies.Monsters.EntityAIBreakBlock;
-import com.zeplar.zeplarszombies.Monsters.EntityInfestedVillager;
-import com.zeplar.zeplarszombies.Monsters.MoveStraightToPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -26,18 +22,9 @@ public class ChatEvent {
             else
             {
                 String num = event.getMessage().substring("makeHouse ".length(), event.getMessage().length());
-                System.out.println("Parsing: " + num + ".");
                 int i = Integer.parseInt(num);
-                makeHouseAround(event.getPlayer(), i);
+                makeShellAround(event.getPlayer(), i);
             }
-        }
-        else if (event.getMessage().equals("makeInfested"))
-        {
-            EntityInfestedVillager villager = new EntityInfestedVillager(event.getPlayer().world);
-            BlockPos position = event.getPlayer().getPosition().north(2);
-            villager.setPosition(position.getX(),position.getY(),position.getZ());
-            event.getPlayer().world.spawnEntity(villager);
-            System.out.println("villager");
         }
 
         else if (event.getMessage().equals("kill all"))
@@ -47,17 +34,32 @@ public class ChatEvent {
                 if (entity instanceof EntityLiving && !(entity instanceof EntityPlayer) ) entity.setDead();
             }
         }
+    }
 
-        else if (event.getMessage().equals("makeCharger"))
+    private static void makeShellAround(EntityPlayer player, int radius)
+    {
+        int x = player.getPosition().getX();
+        int y = player.getPosition().getY();
+        int z = player.getPosition().getZ();
+        for (int dy=0; dy <= 3; dy++)
         {
-            EntityCreeper creeper = new EntityCreeper(event.getPlayer().world);
-            BlockPos position = event.getPlayer().getPosition().north(20);
-            creeper.setPosition(position.getX(),position.getY(),position.getZ());
-            creeper.setGlowing(true);
-            creeper.tasks.addTask(1, new MoveStraightToPlayer(creeper, 2.0, 200));
-            creeper.tasks.addTask(1, new EntityAIBreakBlock(creeper, 1, 100));
-            event.getPlayer().world.spawnEntity(creeper);
+            for (int dx=-radius; dx <= radius; dx++)
+            {
+                player.world.setBlockState(new BlockPos(x+dx, y+dy, z-radius), Blocks.STONE.getDefaultState());
+                player.world.setBlockState(new BlockPos(x+dx, y+dy, z+radius), Blocks.STONE.getDefaultState());
+
+            }
+            for (int dz=-radius; dz <= radius; dz++)
+            {
+                player.world.setBlockState(new BlockPos(x-radius, y+dy, z+dz), Blocks.STONE.getDefaultState());
+                player.world.setBlockState(new BlockPos(x+radius, y+dy, z+dz), Blocks.STONE.getDefaultState());
+            }
         }
+        for (int dx=-radius; dx <= radius; dx++)
+            for (int dz=-radius; dz <= radius; dz++)
+            {
+                player.world.setBlockState(new BlockPos(x+dx, y+3, z+dz), Blocks.STONE.getDefaultState());
+            }
     }
 
     private static void makeHouseAround(EntityPlayer player, int radius)

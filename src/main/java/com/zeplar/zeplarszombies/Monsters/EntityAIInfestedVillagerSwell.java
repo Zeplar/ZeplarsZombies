@@ -13,7 +13,7 @@ public class EntityAIInfestedVillagerSwell extends EntityAIBase {
     public EntityAIInfestedVillagerSwell(EntityInfestedVillager entityVillagerIn)
     {
         this.swellingVillager = entityVillagerIn;
-        this.setMutexBits(1);
+        this.setMutexBits(0);
     }
 
     /**

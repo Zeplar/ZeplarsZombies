@@ -1,6 +1,7 @@
 package com.zeplar.zeplarszombies.Monsters;
 
 import com.zeplar.zeplarszombies.Events.PlayerScentMap;
+import com.zeplar.zeplarszombies.ModConfig;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.monster.EntityCreeper;
@@ -95,7 +96,7 @@ public class MoveStraightToPlayer extends EntityAIBase
     {
         if (this.creature.getPosition().distanceSq(targetPosition) < 4) explode();
 
-        if (this.creature.getRNG().nextInt(2) == 0)
+        if (ModConfig.shrieking && this.creature.getRNG().nextInt(2) == 0)
             creature.world.playSound(null, creature.getPosition(), SoundEvents.ENTITY_GHAST_SCREAM, SoundCategory.HOSTILE, 9.0f, 1.0f);
         aliveTime++;
         if (aliveTime > 300) explode();

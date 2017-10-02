@@ -10,8 +10,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Config.LangKey("zeplarszombies.config.title")
 public class ModConfig {
 
-    @Config.Comment("This is an example boolean property.")
-    public static boolean fooBar = false;
+    @Config.Comment("Whether creepers shriek")
+    public static boolean shrieking = true;
 
     public static final Client client = new Client();
 

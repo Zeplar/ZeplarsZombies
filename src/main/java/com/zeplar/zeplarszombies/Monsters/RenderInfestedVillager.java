@@ -16,7 +16,7 @@ public class RenderInfestedVillager extends RenderLiving<EntityInfestedVillager>
 
     public RenderInfestedVillager(RenderManager renderManagerIn)
         {
-            super(renderManagerIn, new ModelVillager(1.0f), 0.5F);
+            super(renderManagerIn, new ModelVillager(0.0f), 0.5F);
         }
 
         /**
@@ -29,8 +29,8 @@ public class RenderInfestedVillager extends RenderLiving<EntityInfestedVillager>
         f = MathHelper.clamp(f, 0.0F, 1.0F);
         f = f * f;
         f = f * f;
-        float f2 = (1.0F + f * 0.8F) * f1;
-        float f3 = (1.0F + f * 0.3F) / f1;
+        float f2 = (0.9375F + f * 0.8F) * f1;
+        float f3 = (0.9375F + f * 0.3F) / f1;
         GlStateManager.scale(f2, f3, f2);
     }
 

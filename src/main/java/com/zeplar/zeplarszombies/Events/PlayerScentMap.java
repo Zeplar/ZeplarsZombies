@@ -55,7 +55,7 @@ public class PlayerScentMap {
         }
     }
 
-    @SubscribeEvent
+  //  @SubscribeEvent
     public static void onTick(TickEvent.WorldTickEvent event)
     {
         if (event.world.provider.getDimension() != 0) return;
@@ -127,9 +127,10 @@ public class PlayerScentMap {
     {
         double d = -1;
         double candidate;
-        BlockPos candidatePosition = BlockPos.ORIGIN;
+        BlockPos candidatePosition = BlockPos.ORIGIN.up(100);
         for (EntityPlayer player : world.playerEntities)
         {
+            if (player.isCreative()) continue;
             candidate = player.getPosition().distanceSq(pos);
             if (candidate < d || d == -1) {
                 d = candidate;
